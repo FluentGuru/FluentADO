@@ -4,12 +4,12 @@ using System.Text;
 
 namespace System.Data.Fluent
 {
-    public interface IADOEngineDTOParameter<TEntity, TParameter, TCommand, TConnection> : IADOEngineCommand<TCommand, TConnection>
+    public interface IDTOFieldParameterMapping<TEntity, TProperty, TParameter, TCommand, TConnection> : IADOEngineDTOParameter<TEntity, TParameter, TCommand, TConnection>
         where TEntity : class
         where TParameter : IDbDataParameter
         where TCommand : IDbCommand
         where TConnection : IDbConnection
     {
-        
+        TParameter Parameter { get; }
     }
 }
