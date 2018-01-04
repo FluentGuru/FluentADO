@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace System.Data.Fluent
+namespace System.Data.Fluent.Domain
 {
     public interface IFluentDbCommand : IDbCommand
     {

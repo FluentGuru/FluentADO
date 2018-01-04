@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Fluent.Domain;
 using System.Data.Fluent.Internal;
 using System.Text;
 

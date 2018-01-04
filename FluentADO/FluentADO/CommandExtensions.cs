@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Data.Fluent.Domain;
 
 namespace System.Data.Fluent
 {

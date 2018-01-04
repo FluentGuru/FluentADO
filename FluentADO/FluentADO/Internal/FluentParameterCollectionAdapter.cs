@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Fluent.Domain;
 using System.Text;
 
 namespace System.Data.Fluent.Internal
