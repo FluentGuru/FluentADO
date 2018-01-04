@@ -4,21 +4,30 @@ using System.Text;
 
 namespace System.Data.Fluent.Internal
 {
-    internal class FluentCommandDecorator : IDbCommand
+    internal class FluentCommandDecorator : IFluentDbCommand
     {
         private readonly IDbCommand _inner;
+        private readonly FluentParameterCollectionAdapter _fluentCollection;
 
         public FluentCommandDecorator(IDbCommand innerCommand)
         {
             _inner = innerCommand;
+            _fluentCollection = new FluentParameterCollectionAdapter(Parameters);
         }
+
+        #region IFluentDbCommand implementations
+
+        public ICollection<IFluentDbParameter> FluentParameters => _fluentCollection;
+
+        #endregion
+
+        #region IDbCommand implementations
+
         public string CommandText { get => _inner.CommandText; set => _inner.CommandText = value; }
         public int CommandTimeout { get => _inner.CommandTimeout; set => _inner.CommandTimeout = value; }
         public CommandType CommandType { get => _inner.CommandType; set => _inner.CommandType = value; }
         public IDbConnection Connection { get => _inner.Connection; set => _inner.Connection = value; }
-
         public IDataParameterCollection Parameters => _inner.Parameters;
-
         public IDbTransaction Transaction { get => _inner.Transaction; set => _inner.Transaction = value; }
         public UpdateRowSource UpdatedRowSource { get => _inner.UpdatedRowSource; set => _inner.UpdatedRowSource = value; }
 
@@ -61,5 +70,7 @@ namespace System.Data.Fluent.Internal
         {
             _inner.Prepare();
         }
+
+        #endregion 
     }
 }

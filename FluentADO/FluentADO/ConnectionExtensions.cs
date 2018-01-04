@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Fluent.Internal;
 using System.Text;
 
 namespace System.Data.Fluent
 {
     public static class ConnectionExtensions
     {
-        public static IDbCommand Command(this IDbConnection connection, string commandText = null)
+        public static IFluentDbCommand Command(this IDbConnection connection, string commandText = null)
         {
-            return connection
-                .CreateCommand()
+            return new FluentCommandDecorator(connection
+                .CreateCommand())
                 .WithText(commandText);
         }
 
-        public static IDbCommand Procedure(this IDbConnection connection, string commandText = null)
+        public static IFluentDbCommand Procedure(this IDbConnection connection, string commandText = null)
         {
             return Command(connection, commandText)
                 .IsProcedure();
