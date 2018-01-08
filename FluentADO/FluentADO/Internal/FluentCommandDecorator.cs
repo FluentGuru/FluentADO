@@ -20,6 +20,16 @@ namespace System.Data.Fluent.Internal
 
         public ICollection<IFluentDbParameter> FluentParameters => _fluentCollection;
 
+        public IFluentDbParameter CreateParameterIfNotExist(string name)
+        {
+            if(_fluentCollection.Contains(name))
+            {
+                _fluentCollection.Add(new FluentParameterDecorator(CreateParameter()) { ParameterName = name });
+            }
+
+            return _fluentCollection.GetByName(name);
+        }
+
         #endregion
 
         #region IDbCommand implementations

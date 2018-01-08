@@ -25,15 +25,28 @@ namespace System.Data.Fluent
             return parameter;
         }
 
+        public static IFluentDbParameter IsInput(this IFluentDbParameter parameter)
+        {
+            parameter.Direction = ParameterDirection.Input;
+            return parameter;
+        }
+
+        public static IFluentDbParameter IsBiDireccional(this IFluentDbParameter parameter)
+        {
+            parameter.Direction = ParameterDirection.InputOutput;
+            return parameter;
+        }
+
+        public static IFluentDbParameter IsReturn(this IFluentDbParameter parameter)
+        {
+            parameter.Direction = ParameterDirection.ReturnValue;
+            return parameter;
+        }
+
         public static IFluentDbParameter OnOutput<T>(this IFluentDbParameter parameter, Action<T> callback)
         {
             parameter.OutputCallBack = new Action<object>((o) => callback((T)o));
             return parameter;
-        }
-
-        private static void SetOnReference<T>(ref T reference, T newVal)
-        {
-            reference = newVal;
         }
     }
 }

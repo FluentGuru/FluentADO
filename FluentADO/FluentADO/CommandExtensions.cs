@@ -25,5 +25,24 @@ namespace System.Data.Fluent
             command.CommandText = commandText;
             return command;
         }
+
+        public static IFluentDbParameter Parameter(this IFluentDbCommand command, string name)
+        {
+            return command.CreateParameterIfNotExist(name);
+        }
+
+        public static IFluentDbCommand Parameter<T>(this IFluentDbCommand command, string name, T value)
+        {
+            command.Parameter(name)
+                .HasValue(value);
+            return command;
+        }
+
+        public static IFluentDbCommand Parameter(this IFluentDbCommand command, string name, Action<IFluentDbParameter> definition)
+        {
+            var parameter = command.Parameter("name");
+            definition(parameter);
+            return command;
+        }
     }
 }

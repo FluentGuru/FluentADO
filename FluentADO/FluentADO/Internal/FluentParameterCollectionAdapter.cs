@@ -15,6 +15,11 @@ namespace System.Data.Fluent.Internal
             _innerCollection = innerCollection;
         }
 
+        public IFluentDbParameter GetByName(string name)
+        {
+            return (IFluentDbParameter)_innerCollection[name];
+        }
+
         #region IDataParameterCollection Implementation
 
         public object this[string parameterName] { get => _innerCollection[parameterName]; set => _innerCollection[parameterName] = value; }

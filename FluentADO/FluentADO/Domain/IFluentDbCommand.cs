@@ -7,5 +7,7 @@ namespace System.Data.Fluent.Domain
     public interface IFluentDbCommand : IDbCommand
     {
         ICollection<IFluentDbParameter> FluentParameters { get; }
+
+        IFluentDbParameter CreateParameterIfNotExist(string name);
     }
 }
