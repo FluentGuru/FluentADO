@@ -22,7 +22,7 @@ namespace System.Data.Fluent.Internal
 
         public IFluentDbParameter CreateParameterIfNotExist(string name)
         {
-            if(_fluentCollection.Contains(name))
+            if(!_fluentCollection.Contains(name))
             {
                 _fluentCollection.Add(new FluentParameterDecorator(CreateParameter()) { ParameterName = name });
             }

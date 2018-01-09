@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Data.Fluent.Domain;
+using System.Data.Fluent.Internal;
 
 namespace System.Data.Fluent
 {
@@ -42,6 +43,13 @@ namespace System.Data.Fluent
         {
             var parameter = command.Parameter("name");
             definition(parameter);
+            return command;
+        }
+
+        public static IFluentDbCommand Parameter<TEntity>(this IFluentDbCommand command, Action<IEntityParameterMapping<TEntity>> definition = null) where TEntity : class
+        {
+            var mapping = new FluentEntityParameterMapping<TEntity>(command);
+            definition?.Invoke(mapping);
             return command;
         }
     }

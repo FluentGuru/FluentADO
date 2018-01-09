@@ -9,5 +9,7 @@ namespace System.Data.Fluent.Domain
         ICollection<IFluentDbParameter> FluentParameters { get; }
 
         IFluentDbParameter CreateParameterIfNotExist(string name);
+
+
     }
 }

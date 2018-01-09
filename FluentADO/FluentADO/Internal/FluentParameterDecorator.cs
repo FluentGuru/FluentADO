@@ -22,6 +22,6 @@ namespace System.Data.Fluent.Internal
 
         #region IFluentDbParameter Implementation
         public Action<object> OutputCallBack { set => _outputCallback = value; }
-        #endregion 
+        #endregion
     }
 }

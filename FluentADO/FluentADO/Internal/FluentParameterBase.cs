@@ -52,5 +52,14 @@ namespace System.Data.Fluent.Internal
         }
 
         #endregion
+
+        #region Object overrides
+
+        public new Type GetType()
+        {
+            return _innerParameter.GetType();
+        }
+
+        #endregion
     }
 }
