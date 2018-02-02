@@ -30,6 +30,8 @@ namespace System.Data.Fluent.Internal
             return _fluentCollection.GetByName(name);
         }
 
+        public event Action<IFluentDbCommand> OnExecuted;
+
         #endregion
 
         #region IDbCommand implementations
@@ -64,17 +66,24 @@ namespace System.Data.Fluent.Internal
 
         public IDataReader ExecuteReader()
         {
-            return _inner.ExecuteReader();
+            var result = _inner.ExecuteReader(); 
+            OnCommandExecuted();
+            return result;
         }
 
         public IDataReader ExecuteReader(CommandBehavior behavior)
         {
-            return _inner.ExecuteReader(behavior);
+            var result = _inner.ExecuteReader(behavior);
+            OnCommandExecuted();
+            return result;
         }
 
         public object ExecuteScalar()
         {
-            return _inner.ExecuteScalar();
+            var result = _inner.ExecuteScalar();
+            OnCommandExecuted();
+            return result;
+            
         }
 
         public void Prepare()
@@ -83,5 +92,10 @@ namespace System.Data.Fluent.Internal
         }
 
         #endregion 
+
+        protected void OnCommandExecuted()
+        {
+            OnExecuted?.Invoke(this);
+        }
     }
 }

@@ -10,6 +10,6 @@ namespace System.Data.Fluent.Domain
 
         IFluentDbParameter CreateParameterIfNotExist(string name);
 
-
+        event Action<IFluentDbCommand> OnExecuted;
     }
 }
