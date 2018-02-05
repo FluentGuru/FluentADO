@@ -10,14 +10,14 @@ namespace System.Data.Fluent.Internal
     {
         private readonly IDbCommand _inner;
 
-        private readonly ICollection<IFluentParameterBuilder> _builders;
+        private readonly ICollection<IFluentParameterDescriptor> _descriptors;
 
         private readonly ITypeToDbTypeMapping _typeMapping;
 
         public FluentCommandDecorator(IDbCommand innerCommand)
         {
             _inner = innerCommand;
-            _builders = new List<IFluentParameterBuilder>();
+            _descriptors = new List<IFluentParameterDescriptor>();
             _typeMapping = new TypeToDbTypeMapping();
         }
 
@@ -25,9 +25,21 @@ namespace System.Data.Fluent.Internal
 
         public ITypeToDbTypeMapping TypeMapping => _typeMapping;
 
-        public ICollection<IFluentParameterBuilder> ParameterBuilders => _builders;
+        public ICollection<IFluentParameterDescriptor> ParameterDescriptors => _descriptors;
 
         public event Action<IFluentDbCommand> OnExecuted;
+
+        public IEntityParameterDescriptor<TEntity> HasDescriptor<TEntity>(Action<IEntityParameterDescriptor<TEntity>> descriptionAction) where TEntity : class
+        {
+            var descriptor = HasDescriptor<TEntity>();
+            descriptionAction(descriptor);
+            return descriptor;
+        }
+
+        public IEntityParameterDescriptor<TEntity> HasDescriptor<TEntity>() where TEntity : class
+        {
+            return new DefaultEntityParameterDescriptor<TEntity>(this);
+        }
 
         #endregion
 
@@ -95,14 +107,18 @@ namespace System.Data.Fluent.Internal
             OnExecuted?.Invoke(this);
         }
 
-        public IFluentParameterBuilder HasParameter(string name)
+        public IFluentParameterDescriptor HasParameter(string name)
         {
-            throw new NotImplementedException();
+            var parameter = new DefaultFluentParameterDescriptor(this)
+                .HasName(name);
+            _descriptors.Add(parameter);
+            return parameter;
         }
 
-        public IFluentParameterBuilder HasParameter<TParam>(string name) where TParam : struct
+        public IFluentParameterDescriptor HasParameter<TParam>(string name) where TParam : struct
         {
-            throw new NotImplementedException();
+            return HasParameter(name)
+                .HasType<TParam>();
         }
     }
 }
