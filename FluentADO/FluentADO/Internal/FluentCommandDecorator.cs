@@ -12,13 +12,18 @@ namespace System.Data.Fluent.Internal
 
         private readonly ICollection<IFluentParameterBuilder> _builders;
 
+        private readonly ITypeToDbTypeMapping _typeMapping;
+
         public FluentCommandDecorator(IDbCommand innerCommand)
         {
             _inner = innerCommand;
             _builders = new List<IFluentParameterBuilder>();
+            _typeMapping = new TypeToDbTypeMapping();
         }
 
         #region IFluentDbCommand implementations
+
+        public ITypeToDbTypeMapping TypeMapping => _typeMapping;
 
         public ICollection<IFluentParameterBuilder> ParameterBuilders => _builders;
 

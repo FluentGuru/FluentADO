@@ -11,5 +11,7 @@ namespace System.Data.Fluent.Domain
         IFluentParameterBuilder HasParameter(string name);
 
         IFluentParameterBuilder HasParameter<TParam>(string name) where TParam : struct;
+
+        ITypeToDbTypeMapping TypeMapping { get; }
     }
 }
