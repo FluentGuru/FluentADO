@@ -7,13 +7,13 @@ using System.Text;
 
 namespace System.Data.Fluent.Internal
 {
-    public abstract class FluentParameterImplementationBase : IFluentParameterContract
+    public abstract class FluentParameterBuilderBase : IFluentParameterBuilder
     {
         private readonly Stack<Action<IDbDataParameter>> _parameterAction = new Stack<Action<IDbDataParameter>>();
         private IFluentDbCommand _command;
         private IDbDataParameter _parameter;
 
-        public FluentParameterImplementationBase(IFluentDbCommand command)
+        public FluentParameterBuilderBase(IFluentDbCommand command)
         {
             HasCommand(command);
         }
@@ -22,28 +22,28 @@ namespace System.Data.Fluent.Internal
             throw new NotImplementedException();
         }
 
-        public IFluentParameterContract HasCommand(IFluentDbCommand command)
+        public IFluentParameterBuilder HasCommand(IFluentDbCommand command)
         {
             _command = command;
             return this;
         }
 
-        public IFluentParameterContract HasDbType(DbType type)
+        public IFluentParameterBuilder HasDbType(DbType type)
         {
             throw new NotImplementedException();
         }
 
-        public IFluentParameterContract HasName(string name)
+        public IFluentParameterBuilder HasName(string name)
         {
             throw new NotImplementedException();
         }
 
-        public IFluentParameterContract HasType<TParam>()
+        public IFluentParameterBuilder HasType<TParam>()
         {
             throw new NotImplementedException();
         }
 
-        public IFluentParameterContract HasType(Type parameterType)
+        public IFluentParameterBuilder HasType(Type parameterType)
         {
             throw new NotImplementedException();
         }

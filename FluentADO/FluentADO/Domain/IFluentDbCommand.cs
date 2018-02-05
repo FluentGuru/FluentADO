@@ -6,10 +6,10 @@ namespace System.Data.Fluent.Domain
 {
     public interface IFluentDbCommand : IDbCommand
     {
-        ICollection<IFluentDbParameter> FluentParameters { get; }
-
-        IFluentDbParameter CreateParameterIfNotExist(string name);
-
         event Action<IFluentDbCommand> OnExecuted;
+
+        IFluentParameterBuilder HasParameter(string name);
+
+        IFluentParameterBuilder HasParameter<TParam>(string name) where TParam : struct;
     }
 }

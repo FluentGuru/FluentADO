@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Fluent.Domain;
+using System.Linq;
 using System.Text;
 
 namespace System.Data.Fluent.Internal
@@ -8,27 +9,18 @@ namespace System.Data.Fluent.Internal
     internal class FluentCommandDecorator : IFluentDbCommand
     {
         private readonly IDbCommand _inner;
-        private readonly FluentParameterCollectionAdapter _fluentCollection;
+
+        private readonly ICollection<IFluentParameterBuilder> _builders;
 
         public FluentCommandDecorator(IDbCommand innerCommand)
         {
             _inner = innerCommand;
-            _fluentCollection = new FluentParameterCollectionAdapter(Parameters);
+            _builders = new List<IFluentParameterBuilder>();
         }
 
         #region IFluentDbCommand implementations
 
-        public ICollection<IFluentDbParameter> FluentParameters => _fluentCollection;
-
-        public IFluentDbParameter CreateParameterIfNotExist(string name)
-        {
-            if(!_fluentCollection.Contains(name))
-            {
-                _fluentCollection.Add(new FluentParameterDecorator(CreateParameter()) { ParameterName = name });
-            }
-
-            return _fluentCollection.GetByName(name);
-        }
+        public ICollection<IFluentParameterBuilder> ParameterBuilders => _builders;
 
         public event Action<IFluentDbCommand> OnExecuted;
 
@@ -96,6 +88,16 @@ namespace System.Data.Fluent.Internal
         protected void OnCommandExecuted()
         {
             OnExecuted?.Invoke(this);
+        }
+
+        public IFluentParameterBuilder HasParameter(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IFluentParameterBuilder HasParameter<TParam>(string name) where TParam : struct
+        {
+            throw new NotImplementedException();
         }
     }
 }

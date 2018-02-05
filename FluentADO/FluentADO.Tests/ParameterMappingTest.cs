@@ -11,9 +11,6 @@ namespace FluentADO.Tests
         [TestMethod]
         public void TestEntityParameterMapping()
         {
-            new SqlConnection()
-                .Command("")
-                .Parameter<Customer>();
         }
     }
 }
