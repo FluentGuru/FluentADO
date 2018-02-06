@@ -36,5 +36,28 @@ namespace FluentADO.Tests
 
             Assert.AreEqual(2, descriptor.Parameters.Count());
         }
+
+        [TestMethod]
+        public void TestParameterMappingBindingPropertiesToValue()
+        {
+            var customer = new Customer();
+            var command = GetConnection().Command("SELECT @Name = 'John', @LastName = 'Doe'");
+            var descriptor = command.HasDescriptor<Customer>();
+            descriptor.Parameter(c => c.Name).AsOutput();
+            descriptor.Parameter(c => c.LastName).AsOutput();
+
+            descriptor.Bind(customer);
+            command.ExecuteNonQuery();
+
+            Assert.AreEqual("John", customer.Name);
+            Assert.AreEqual("Doe", customer.LastName);
+        }
+
+        private SqlConnection GetConnection()
+        {
+            var connection = new SqlConnection("Server=(localdb)\\mssqllocaldb;Trusted_Connection=True");
+            connection.Open();
+            return connection;
+        }
     }
 }

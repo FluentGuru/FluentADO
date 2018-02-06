@@ -15,6 +15,10 @@ namespace System.Data.Fluent.Domain
         IFluentParameterDescriptor WithValue(object value);
         IFluentParameterDescriptor AsOutput(Action<IFluentDbCommand> callBack);
         IFluentParameterDescriptor AsReturnValue(Action<IFluentDbCommand> callBack);
+        IFluentParameterDescriptor AsOutput();
+        IFluentParameterDescriptor AsReturnValue();
+        IFluentParameterDescriptor HasPrecision(byte precision, byte scale);
+        IFluentParameterDescriptor HasSize(int size);
         IDbDataParameter Parameter { get; }
     }
 
@@ -22,5 +26,6 @@ namespace System.Data.Fluent.Domain
         where TEntity : class
     {
         Expression<Func<TEntity, TMember>> Tree { get; }
+        IFluentParameterDescriptor<TEntity, TMember> BindEntity(TEntity entity);
     }
 }

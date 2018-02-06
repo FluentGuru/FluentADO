@@ -4,6 +4,8 @@ using System.Data.Fluent.Domain;
 using System.Data.Fluent.Utilities;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace System.Data.Fluent.Internal
@@ -17,6 +19,7 @@ namespace System.Data.Fluent.Internal
         {
             HasCommand(command);
             _parameter = _command.CreateParameter();
+            command.Parameters.Add(_parameter);
         }
 
         public IFluentParameterDescriptor HasCommand(IFluentDbCommand command)
@@ -41,6 +44,7 @@ namespace System.Data.Fluent.Internal
         {
             if (_parameter.Value == null || !(_parameter.Value is TParam))
             {
+                HasSize(Marshal.SizeOf<TParam>());
                 return WithValue(default(TParam));
             }
 
@@ -49,6 +53,7 @@ namespace System.Data.Fluent.Internal
 
         public IFluentParameterDescriptor HasType(Type parameterType)
         {
+            HasSize(int.MaxValue);
             switch(_parameter)
             {
                 case IDbDataParameter p when 
@@ -84,6 +89,30 @@ namespace System.Data.Fluent.Internal
             return HasCallBack(callBack);
         }
 
+        public virtual IFluentParameterDescriptor AsOutput()
+        {
+            _parameter.Direction = ParameterDirection.Output;
+            return this;
+        }
+
+        public virtual IFluentParameterDescriptor AsReturnValue()
+        {
+            _parameter.Direction = ParameterDirection.ReturnValue;
+            return this;
+        }
+
+        public IFluentParameterDescriptor HasPrecision(byte precision, byte scale)
+        {
+            _parameter.Precision = precision;
+            _parameter.Scale = scale;
+            return this;
+        }
+        public IFluentParameterDescriptor HasSize(int size)
+        {
+            _parameter.Size = size;
+            return this;
+        }
+
         public IDbDataParameter Parameter => _parameter;
 
         protected virtual IFluentParameterDescriptor HasCallBack(Action<IFluentDbCommand> callBack)
@@ -97,6 +126,8 @@ namespace System.Data.Fluent.Internal
         where TEntity : class
     {
         private readonly Expression<Func<TEntity, TMember>> _tree;
+
+        private TEntity _reference;
         public FluentParameterDescriptorBase(Expression<Func<TEntity, TMember>> tree, IFluentDbCommand command) : base(command)
         {
             CheckTree(tree);
@@ -113,13 +144,8 @@ namespace System.Data.Fluent.Internal
 
         private MemberExpression MemberExpression => _tree.Body as MemberExpression;
 
-        private Expression<Func<TMember>> ParameterReturn => () => (TMember)Parameter.Value;
+        private Action<IFluentDbCommand> CommandCallback => (command) => AssignParameterValue();
 
-        private Action<IFluentDbCommand> CallBack => Expression
-                .Lambda<Action<IFluentDbCommand>>(Expression
-                .Assign(MemberExpression, ParameterReturn),
-                Expression.Parameter(typeof(IFluentDbCommand), "command"))
-                .Compile();
 
         private void InitMemberParameter()
         {
@@ -129,14 +155,45 @@ namespace System.Data.Fluent.Internal
 
         public override IFluentParameterDescriptor AsOutput(Action<IFluentDbCommand> callBack)
         {
-            HasCallBack(CallBack);
+            HasCallBack(CommandCallback);
             return base.AsOutput(callBack);
         }
 
         public override IFluentParameterDescriptor AsReturnValue(Action<IFluentDbCommand> callBack)
         {
-            HasCallBack(CallBack);
+            HasCallBack(CommandCallback);
             return base.AsReturnValue(callBack);
+        }
+
+        public override IFluentParameterDescriptor AsReturnValue()
+        {
+            HasCallBack(CommandCallback);
+            return base.AsReturnValue();
+        }
+
+        public override IFluentParameterDescriptor AsOutput()
+        {
+            HasCallBack(CommandCallback);
+            return base.AsOutput();
+        }
+
+        public IFluentParameterDescriptor<TEntity, TMember> BindEntity(TEntity entity)
+        {
+            _reference = entity;
+            return this;
+        }
+
+        protected virtual void AssignParameterValue()
+        {
+            ArgumentCheckHelper.Check(_reference != null, "BindEntity<>", "Need to bind a non null entity instance");
+            if(MemberExpression.Member is FieldInfo)
+            {
+                (MemberExpression.Member as FieldInfo).SetValue(_reference, Parameter.Value);
+            }
+            else if(MemberExpression.Member is PropertyInfo)
+            {
+                (MemberExpression.Member as PropertyInfo).SetValue(_reference, Parameter.Value);
+            }
         }
     }
 }

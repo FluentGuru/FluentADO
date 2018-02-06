@@ -9,5 +9,6 @@ namespace System.Data.Fluent.Domain
     {
         IEnumerable<IFluentParameterDescriptor> Parameters { get; }
         IFluentParameterDescriptor Parameter<TMember>(Expression<Func<TEntity, TMember>> memberExpression);
+        IEntityParameterDescriptor<TEntity> Bind(TEntity entity);
     }
 }
